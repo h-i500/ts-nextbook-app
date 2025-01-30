@@ -3,6 +3,10 @@ FROM node:18 AS builder
 
 WORKDIR /app
 
+# APIのエンドポイントを環境変数として設定
+ARG NEXT_PUBLIC_API_URL="https://your-api.com"
+ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+
 # まず package.json と package-lock.json をコピー
 COPY package.json package-lock.json ./
 
@@ -19,6 +23,10 @@ RUN npm run build
 FROM node:18-alpine
 
 WORKDIR /app
+
+# 環境変数を再設定（ランタイムでも API URL を使えるように）
+ARG NEXT_PUBLIC_API_URL="https://your-api.com"
+ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
 
 # 必要なファイルのみコピー
 COPY --from=builder /app/.next .next
